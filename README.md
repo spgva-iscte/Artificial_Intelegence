@@ -15,4 +15,4 @@ TrafficLight system for the use of restaurants during covid 19 era. It follows s
 Fuzzy Logics system that allows controlling a vaccum cleaner navigation robot. The robot is equiped with 3 sensors.
 
 ## Project 3
-Hawks classifictation system
+Hawks and Mushroom classifictation system
