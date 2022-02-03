@@ -1,0 +1,64 @@
+FUNCTION_BLOCK
+
+VAR_INPUT
+	sensor_right : REAL;
+	sensor_left : REAL;
+	sensor_center : REAL;
+END_VAR
+
+VAR_OUTPUT
+	rotation_angle : REAL;
+END_VAR
+
+FUZZIFY sensor_right
+	TERM near := (0,1) (1,0.9) (2,0.7) (3,0.4) (4,0);
+	TERM medium :=  (1,0) (2,0.4) (3,0.7) (4,0.9) (5,1) (6,0.8) (7,0.6) (8,0.4) (9,0);
+	TERM far := (5,0) (6,0.3) (7,0.6) (8,0.8) (9,0.9) (10,1);
+END_FUZZIFY
+
+FUZZIFY sensor_left
+	TERM near := (0,1) (1,0.9) (2,0.7) (3,0.4) (4,0);
+	TERM medium := (1,0) (2,0.4) (3,0.7) (4,0.9) (5,1) (6,0.8) (7,0.6) (8,0.4) (9,0);
+	TERM far := (5,0) (6,0.3) (7,0.6) (8,0.8) (9,0.9) (10,1);
+END_FUZZIFY
+
+FUZZIFY sensor_center
+	TERM near := (0,1) (1,0.9) (2,0.7) (3,0.4) (4,0);
+	TERM medium := (1,0) (2,0.4) (3,0.7) (4,0.9) (5,1) (6,0.8) (7,0.6) (8,0.4) (9,0);
+	TERM far := (5,0) (6,0.3) (7,0.6) (8,0.8) (9,0.9) (10,1);
+END_FUZZIFY
+
+DEFUZZIFY rotation_angle
+	TERM strong_left := (-45,1) (-35,0);
+	TERM left := (-35,0) (-22,1) (-7,0);
+	TERM center := (-7,0) (0,1)  (7,0);
+	TERM right :=  (7,0) (22,1) (35,0);
+	TERM strong_right := (35,0) (45,1);
+	
+	METHOD : COG;
+	DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;
+	ACT : MIN;
+	ACCU : MAX;
+	
+	RULE 1 : IF sensor_right IS near THEN rotation_angle IS strong_left;
+	RULE 2 : IF sensor_left IS near THEN rotation_angle IS strong_right;  
+	RULE 3 : IF sensor_center IS near AND sensor_right IS near THEN rotation_angle IS strong_left;
+	RULE 4 : IF sensor_center IS near AND sensor_left IS near THEN rotation_angle IS strong_right;
+	RULE 5 : IF sensor_center IS near AND sensor_left IS near AND sensor_right IS near THEN rotation_angle IS strong_left;
+	//RULE 5 : IF sensor_right IS near AND sensor_left IS near THEN rotation_angle IS center;
+	//RULE 5 : IF sensor_center IS near THEN rotation_angle IS left;
+	//RULE 6 : IF sensor_right IS medium THEN rotation_angle IS left;
+	//RULE 7 : IF sensor_left IS medium THEN rotation_angle IS right;
+	//RULE 9 : IF sensor_right IS far THEN rotation_angle IS center;
+	//RULE 10 : IF sensor_center IS far THEN rotation_angle IS center;
+	//RULE 11 : IF sensor_left IS far THEN rotation_angle IS center;
+	//RULE 12 : IF sensor_center IS medium THEN rotation_angle IS right;
+	
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
